@@ -33,7 +33,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-///<reference  path="index.d.ts" />
+///<reference  path="variablefont.d.ts" />
+///<reference  path="chrome_post_lib.d.ts" />
 (function (global) {
     var _requestedFontFile = "";
     function LoadVariableFont(fontFile, callback) {
@@ -49,7 +50,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
             callback(err, vf);
         });
     }
-    var VariableFont = (function () {
+    var VariableFont = /** @class */ (function () {
         function VariableFont(font) {
             var FontType = {
                 "fontFamily": "AvenirNext_Variable",

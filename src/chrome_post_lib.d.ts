@@ -3,21 +3,6 @@
  * 
  * The contents of this file are appending to chrome_lib.d.ts.
  */
-declare var CustomEvent: {
-    prototype: CustomEvent;
-    new(type?: string, options?: CustomEventOptions): CustomEvent;
-};
-
-declare var KeyboardEvent: {
-    prototype: KeyboardEvent;
-    new(typeArg?: string, init?: KeyboardEvent): KeyboardEvent;
-    DOM_KEY_LOCATION_RIGHT: number;
-    DOM_KEY_LOCATION_STANDARD: number;
-    DOM_KEY_LOCATION_LEFT: number;
-    DOM_KEY_LOCATION_NUMPAD: number;
-    DOM_KEY_LOCATION_JOYSTICK: number;
-    DOM_KEY_LOCATION_MOBILE: number;
-};
 
 interface Console {
     timeStamp(label: string): void;

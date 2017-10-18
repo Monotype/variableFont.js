@@ -1,4 +1,5 @@
 ///<reference  path="variablefont.d.ts" />
+///<reference  path="chrome_post_lib.d.ts" />
 (function (global) {
     var _requestedFontFile = "";
 
