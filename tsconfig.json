@@ -1,11 +1,18 @@
 {
     "compilerOptions": {
         "target": "es5",
-        "module": "es2015",
-        "watch": true,
+        "module": "none",
+        "watch": false,
+        "outFile": "./variablefont.js",
         "lib": [
             "es2015",
             "dom"
         ]
-    }
+    },
+    "files": [
+        "./src/index.ts"
+    ],
+    "include": [
+        "**/src/**.ts"
+    ]
 }
