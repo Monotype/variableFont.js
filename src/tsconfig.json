@@ -3,16 +3,16 @@
         "target": "es5",
         "module": "none",
         "watch": false,
-        "outFile": "./variablefont.js",
+        "outFile": "../variablefont.js",
         "lib": [
             "es2015",
             "dom"
         ]
     },
     "files": [
-        "./src/index.ts"
+        "./index.ts"
     ],
     "include": [
-        "**/src/**.ts"
+        "**/**.ts"
     ]
 }
