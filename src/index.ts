@@ -79,6 +79,10 @@
             ParseAxesAndInstances(this.font, fvarTable);
         }
 
+        get openTypeFont() {
+            return this.font;
+        }
+
         getAxis() {
 
             for (var a in this.font.axes) {
