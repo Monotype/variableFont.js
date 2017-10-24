@@ -24,11 +24,12 @@ interface IFontType {
     menuName: string,
     axes: IFontAxis[],
     instances: any[],
-    names: any[],
+    names: any,
     type: string,
     url: string
 }
 
 declare var opentype: {
-    load: (fontUrl: string, callback: (err: any, font: IFontInfo) => void) => void
+    load: (fontUrl: string, callback: (err: any, font: IFontInfo) => void) => void,
+    parse: (fontBuffer: ArrayBuffer) => IFontInfo
 }

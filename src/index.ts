@@ -1,26 +1,61 @@
 ///<reference  path="variablefont.d.ts" />
 ///<reference  path="chrome_post_lib.d.ts" />
 (function (global) {
-    var _requestedFontFile = "";
+    
+    function loadFromUrl(url, callback) {
+        // Function copied from opentype.js
+        var request = new XMLHttpRequest;
+        request.open("get", url, true);
+        request.responseType = "arraybuffer";
+        request.onload = function () {
+            if (request.status !== 200) {
+                return callback("Font could not be loaded: " + request.statusText)
+            }
+            return callback(null, request.response)
+        };
+        request.onerror = function () {
+            callback("Font could not be loaded")
+        };
+        request.send()
+    }
 
     function LoadVariableFont(fontFile: string, callback: (err: any, font: VariableFont) => void) {
         if (!opentype)
             throw "opentype.js is requried!";
-        _requestedFontFile = fontFile;
-        opentype.load(fontFile, function (err, fnt) {
-            var vf = null;
-            fnt.url = fontFile;
-            if (!err) {
-                
-                vf = new VariableFont(fnt);
+        loadFromUrl(fontFile, function (err, arrayBuffer) {
+            if (err) {
+                return callback(err, null);
             }
-            callback(err, vf);
+            var font;
+            try {
+                font = ParseFont(arrayBuffer);
+            } catch (e) {
+                return callback(e, null)
+            }
+            return callback(null, font)
         });
+    }
+
+    function ParseFont(fontBuffer: ArrayBuffer) {
+        if (!opentype)
+            throw "opentype.js is requried!";
+
+        return new VariableFont(fontBuffer);
+    }
+
+    function uint8ToBase64(buffer: Uint8Array) {
+        var binary = '';
+        var len = buffer.byteLength;
+        for (var i = 0; i < len; i++) {
+            binary += String.fromCharCode(buffer[i]);
+        }
+        return window.btoa(binary);
     }
 
     class VariableFont {
         private font: IFontType;
-        constructor(font: IFontInfo) {
+        private _requestedFontFile: string;
+        constructor(font: IFontInfo | ArrayBuffer) {
             var FontType: IFontType = {
                 "fontFamily": "AvenirNext_Variable",
                 "menuName": "AvenirNext_Variable",
@@ -30,7 +65,14 @@
                 "type": "system",
                 "url": ""
             };
-            //this.font = Object.assign(font, FontType);/// review
+
+            if (font instanceof ArrayBuffer) {
+                let fontBuffer: ArrayBuffer = font as ArrayBuffer;
+                font = opentype.parse(fontBuffer);
+                var tempUint8array = new Uint8Array(fontBuffer);
+                this._requestedFontFile = "data:;base64," + uint8ToBase64(tempUint8array);
+            }
+
             console.log("VariableFont constructor : %o", font);
             this.font = Object.assign(font, FontType);
             var fvarTable = font.tables.fvar;
@@ -108,13 +150,14 @@
             //create @font-face and append on head.
             //Check whether font is loaded or not. -> Done with calling isFontAvailable function
             var self = this;
-            await this.waitForFontToBeAvailable('AvenirNext_Variable', _requestedFontFile);
+            var familyName = this.font.names.fontFamily.en;
+            await this.waitForFontToBeAvailable(familyName, this._requestedFontFile);
             //var setting=
             var spanElement = document.createElement('span')
             spanElement.innerHTML = content;
             spanElement.style.fontSize = fontSize;
             spanElement.setAttribute("id", "testDiv");
-            var cssStyle = "position: absolute;height: auto;width: auto;font-family:'AvenirNext_Variable';white-space: nowrap;"
+            var cssStyle = "position: absolute;height: auto;width: auto;font-family:'" + familyName + "';white-space: nowrap;"
             spanElement.setAttribute("style", cssStyle);
             var body = document.body;
             body.insertBefore(spanElement, body.firstChild);
@@ -169,9 +212,6 @@
                     console.info('Current status', fontFace.status);
                     console.log(fontFace.family, 'loaded successfully.');
 
-                    // Add a class to the body element
-                    //  document.body.classList.add('AvenirNext_Variable-loaded');
-
                     // Throw an error if loading wasn't successful
                 }, (fontFace) => {
                     console.error('Current status', ff.status);
@@ -206,7 +246,8 @@
             }
             spanElement.innerHTML = content;
             spanElement.style.fontSize = fontSize;
-            var cssStyle = "position: absolute;height: auto;width: auto;font-family:'AvenirNext_Variable';white-space: nowrap;"
+            var familyName = this.font.names.fontFamily.en;
+            var cssStyle = "position: absolute;height: auto;width: auto;font-family:'" + familyName + "';white-space: nowrap;"
             spanElement.setAttribute("style", cssStyle);
             var style = "'" + axis.tag + "' " + (presetAxis == "min" ? axis.min : (presetAxis == "max" ? axis.max : axis.default)) + ",'wdth' 100";
             spanElement.style.fontVariationSettings = style;
@@ -325,6 +366,7 @@
     }
 
     global["VariableFonts"] = {
-        load: LoadVariableFont
+        load: LoadVariableFont,
+        parse: ParseFont
     };
 })(this);
