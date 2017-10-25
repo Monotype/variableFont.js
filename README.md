@@ -22,43 +22,21 @@ The output file is `variablefont.js` in the root folder.
 
 ## API:
 
-A global object `VariableFonts` is made available when variablefont.js is added in a page. This object can be used to load the font files.
+A global class `VariableFont` is made available when variablefont.js is added in a page. This class can be used to extend opentype.js Font object.
 
-Loading from url:
-
-```js
-
-VariableFonts.load('./url_to_font_file', function(err, font) {
-    var noOfAxes = font.getAxesCount();
-    // ... 
-});
-```
-Using arraybuffer support:
 
 ```js
-function drop(ev) {
-    ev.stopPropagation();
-    ev.preventDefault();
-    var files = ev.dataTransfer.files;
-        
-    for (var i=0, file; file=files[i]; i++) {
-        var reader = new FileReader();
+var vf = new VariableFont(font); // Where font is the "font" object of opentype.js library
+var otFont = vf.openTypeFont; // Get access to original font object.
 
-        reader.onload = function(e2) {
-            try {
-                var fontBuffer = e2.target.result;
-                var font = VariableFonts.parse(fontBuffer);
-                var noOfAxes = font.getAxesCount();
-                // ...
-            } catch (err) {
-                console.log(err);
-            }
-        }
+// Extra functionalities provided by VariableFont are:
 
-        reader.readAsArrayBuffer(file);
-    }
-}
+vf.getAxes(); // get axes field from fvar table.
+vf.getInstances(); // get instances field from fvar table.
+vf.getInstancesCount(); // get number of instances entries from fvar table.
+vf.getAxesCount(); // get number of axes entries from fvar table.
 ```
+
 
 ## Dependency
 
