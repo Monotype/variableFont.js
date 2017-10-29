@@ -69,7 +69,45 @@ class VariableFont implements IFontInfo {
         }
         return 0;
     }
-
+    
+    /**
+     * Get named instance string from fvar table.
+     */
+    getInstanceName(i: number) {
+        var fvar = this.getFvarTable();
+        if (fvar) {
+            return fvar.instances[i].name.en;
+        }
+        return null;
+    }
+    
+    /**
+     * Get named instance string from fvar table.
+     */
+    getNamedInstance(i: number) {
+        var fvar = this.getFvarTable();
+        if (fvar) {
+            return fvar.instances[i];
+        }
+        return null;
+    }
+    
+    /**
+     * Get the font-variation-settings string for a named instance string from fvar table.
+     */
+    getNamedInstanceSetting(i: number) {
+        var fvar = this.getFvarTable();
+        if (fvar) {
+            var settings = [];
+            var values = fvar.instances[i].coordinates;
+            for (var i=0; i<fvar.axes.length; i++) {
+                settings.push("'"+fvar.axes[i].tag + "' " + values[fvar.axes[i].tag].toString());
+            }
+            return settings.join();
+        }
+        return null;
+    }
+    
     /**
      * Get number of axes in fvar table.
      */

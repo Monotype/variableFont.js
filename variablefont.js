@@ -1,4 +1,10 @@
+/**
+ * @class VariableFont
+ */
 var VariableFont = /** @class */ (function () {
+    /**
+     * @param openTypeFont the `Font` object of opentype.js
+     */
     function VariableFont(openTypeFont) {
         this.openTypeFont = openTypeFont;
         this.ascender = 0;
@@ -56,6 +62,41 @@ var VariableFont = /** @class */ (function () {
             }
         }
         return 0;
+    };
+    /**
+     * Get named instance string from fvar table.
+     */
+    VariableFont.prototype.getInstanceName = function (i) {
+        var fvar = this.getFvarTable();
+        if (fvar) {
+            return fvar.instances[i].name.en;
+        }
+        return null;
+    };
+    /**
+     * Get named instance string from fvar table.
+     */
+    VariableFont.prototype.getNamedInstance = function (i) {
+        var fvar = this.getFvarTable();
+        if (fvar) {
+            return fvar.instances[i];
+        }
+        return null;
+    };
+    /**
+     * Get the font-variation-settings string for a named instance string from fvar table.
+     */
+    VariableFont.prototype.getNamedInstanceSetting = function (i) {
+        var fvar = this.getFvarTable();
+        if (fvar) {
+            var settings = [];
+            var values = fvar.instances[i].coordinates;
+            for (var i = 0; i < fvar.axes.length; i++) {
+                settings.push("'" + fvar.axes[i].tag + "' " + values[fvar.axes[i].tag].toString());
+            }
+            return settings.join();
+        }
+        return null;
     };
     /**
      * Get number of axes in fvar table.
