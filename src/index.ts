@@ -28,6 +28,7 @@ class VariableFont implements IFontInfo {
         console.log("Copied properties constructor : %o", this);
         if (this.tables) {
             var fvar = this.tables["fvar"];
+            if (fvar && fvar.axes && (fvar.axes.length > 0)) {
                 var sortedInstances = fvar.instances.sort(function(a,b){
                     var condition = 0;
                     var tags = Object.keys(a.coordinates);
