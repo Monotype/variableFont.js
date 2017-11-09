@@ -26,6 +26,20 @@ class VariableFont implements IFontInfo {
         Object.assign(this, openTypeFont);
         (this as any).prototype = openTypeFont;
         console.log("Copied properties constructor : %o", this);
+        if (this.tables) {
+            var fvar = this.tables["fvar"];
+                var sortedInstances = fvar.instances.sort(function(a,b){
+                    var condition = 0;
+                    var tags = Object.keys(a.coordinates);
+                    var i = 0;
+                    while (condition == 0 && i < tags.length){
+                        condition = ((a.coordinates[tags[i]] > b.coordinates[tags[i]] ) ? 1 : ((b.coordinates[tags[i]]  > a.coordinates[tags[i]] ) ? -1 : 0));
+                        i++;
+                    }
+                    return condition;
+                } );
+            }
+        }
     }
 
     /**
@@ -45,7 +59,43 @@ class VariableFont implements IFontInfo {
         }
         return null;
     }
-
+   
+    /**
+     * Get number of axes in fvar table.
+     */
+    getAxesCount() {
+        var fvar = this.getFvarTable();
+        if (fvar) {
+            if (fvar.axes && (fvar.axes.length > 0)) {
+                return fvar.axes.length
+            }
+        }
+        return 0;
+    }
+    
+        /**
+     * Get axis name string from fvar table.
+     */
+    getAxis(i: number) {
+        var fvar = this.getFvarTable();
+        if (fvar) {
+            return fvar.axes[i];
+        }
+        return null;
+    }
+    
+    
+    /**
+     * Get axis name string from fvar table.
+     */
+    getAxisName(i: number) {
+        var fvar = this.getFvarTable();
+        if (fvar) {
+            return fvar.axes[i].name.en;
+        }
+        return null;
+    }
+    
     /**
      * Get instances from fvar table.
      */
@@ -107,17 +157,5 @@ class VariableFont implements IFontInfo {
         }
         return null;
     }
-    
-    /**
-     * Get number of axes in fvar table.
-     */
-    getAxesCount() {
-        var fvar = this.getFvarTable();
-        if (fvar) {
-            if (fvar.axes && (fvar.axes.length > 0)) {
-                return fvar.axes.length
-            }
-        }
-        return 0;
-    }
+ 
 }
