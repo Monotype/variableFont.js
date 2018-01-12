@@ -23,7 +23,6 @@ var VariableFont = /** @class */ (function () {
         console.log("Copying properties...");
         Object.assign(this, openTypeFont);
         this.prototype = openTypeFont;
-        console.log("Copied properties constructor : %o", this);
         if (this.tables) {
             var fvar = this.tables["fvar"];
             if (fvar && fvar.axes && (fvar.axes.length > 0)) {
@@ -37,6 +36,9 @@ var VariableFont = /** @class */ (function () {
                     }
                     return condition;
                 });
+            }
+            if (this.names.fontFamily == null) {
+                this.names.fontFamily = this.names.postScriptName;
             }
         }
     }

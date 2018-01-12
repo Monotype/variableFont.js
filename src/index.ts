@@ -25,7 +25,6 @@ class VariableFont implements IFontInfo {
         console.log("Copying properties...");
         Object.assign(this, openTypeFont);
         (this as any).prototype = openTypeFont;
-        console.log("Copied properties constructor : %o", this);
         if (this.tables) {
             var fvar = this.tables["fvar"];
             if (fvar && fvar.axes && (fvar.axes.length > 0)) {
@@ -39,6 +38,9 @@ class VariableFont implements IFontInfo {
                     }
                     return condition;
                 } );
+            }
+            if (this.names.fontFamily == null) {
+                this.names.fontFamily = this.names.postScriptName;
             }
         }
     }
