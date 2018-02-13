@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8"><meta charset="utf-8">
+<link rel="stylesheet" href="VariableFontViewer.css">
+
+<style id="sampletextfont"></style>
+
+<script type="text/javascript" src="lib/jquery.min.js"></script>
+<script type="text/javascript" src="lib/opentype.min.js"></script>
+<script type="text/javascript" src="variableFont.js"></script>
+
+<script type="text/javascript">
+
+    function showErrorMessage(message) {
+        var el = document.getElementById('message');
+        if (!message || message.trim().length === 0) {
+            el.style.display = 'none';
+        } else {
+            el.style.display = 'block';
+        }
+        el.innerHTML = message;
+    }
+    
+    // utility function to convert Uint8Array to a string
+    // this avoids RangeError: Maximum call stack exceeded error for large buffers
+    function Uint8ToString(u8a){
+        var CHUNK_SZ = 0x8000;
+        var c = [];
+        for (var i=0; i < u8a.length; i+=CHUNK_SZ) {
+            c.push(String.fromCharCode.apply(null, u8a.subarray(i, i+CHUNK_SZ)));
+        }
+        return c.join("");
+    }
+
+    //////////////////////////////////////////////////////////
+    // font file drag and drop functionality
+    //////////////////////////////////////////////////////////
+    function allowDrop(ev) {
+        ev.preventDefault();
+    }
+    
+    function drag(ev) {
+        ev.dataTransfer.setData("text", ev.target.id);
+        ev.dataTransfer.dropEffect = 'copy';
+    }
+    
+    function drop(ev) {
+        ev.stopPropagation();
+        ev.preventDefault();
+        var files = ev.dataTransfer.files;
+            
+        for (var i=0, file; file=files[i]; i++) {
+            var reader = new FileReader();
+
+            reader.onload = function(e2) {
+                // create variable opentype font once file is read
+                try {
+                    var fontBuffer = e2.target.result;
+                    var vf = new VariableFont(opentype.parse(fontBuffer));
+                    onFontLoaded(vf, fontBuffer);
+                    showErrorMessage('');
+                } catch (err) {
+                    showErrorMessage(err.toString());
+                }
+            }
+
+            reader.readAsArrayBuffer(file);
+        }
+    }
+    
+    // change page when font is loaded
+    function onFontLoaded(varFont, fontBuffer) {
+        window.font = varFont;
+        var currentSettings = [];
+        var settingsStrings = [];
+        
+        // html with basic information about the variable font
+        var html = '<span style="font-size:16px;" style="text-align: left;"> <table width="100%"><col width="20%"><col width="10%"><col width="70%"><tr><td>' +
+		           'Family: '+ varFont.names.fontFamily.en + '<br>' +
+                   'Subfamily: ' + varFont.names.fontSubfamily.en + '<br>' +
+                   'Instances: ' + varFont.getInstancesCount() + '<br>Axes: ' + varFont.getAxesCount() + '<br>' +
+                   '<div id="currentSetting"></div></td><td>';
+        
+        // if font is a variable font, add named instances dropdown and sliders
+        if (varFont.getAxesCount()) {
+        
+            // add a dropdown button with named instances to select        
+            html += ' <div class="dropdown">' +
+                    '  <button onclick="toggleDropdownList()" class="dropbtn">Named Instances</button>' +
+                    '  <div id="myDropdown" class="dropdown-content" onclick="toggleDropdownList()"> ';
+            
+            // add the instance selection links
+            for (var i=0; i<varFont.getInstancesCount(); i++) {
+                html += '<div id="list"'+ i.toString() + ' onclick="setNamedInstance(' + i.toString()+')"><a href="#">' + 
+                        varFont.getInstanceName(i) + '</a></div>';
+            }
+            html += '  </div></div></td><td> '; 
+
+            // add slider controls for each axis
+            html += '<div id="slidecontainer"><table>';
+            for (var j=0; j<varFont.getAxesCount(); j++) {
+                var axis = varFont.getAxis(j);
+                html += '<tr><td align="right">' + axis.minValue.toString() + '</td><td>' + 
+                        '<input type="range" min="' + axis.minValue.toString()+ '" max="' + axis.maxValue.toString() + 
+                        '" value="' + axis.defaultValue.toString() + '" class="slider" id="slider' + j.toString() + '" step="0.1"></td><td>' +
+                        axis.maxValue.toString() + '</td><td>' + axis.name.en + '</td></tr>';
+                currentSettings.push("'" + axis.tag + "' " + axis.defaultValue.toString());
+                settingsStrings.push(" " + axis.name.en + ": " + axis.defaultValue.toString());
+            }
+            html += '</table></div>';
+            
+        } 
+        html += '</td></tr></table></span>';
+        
+        // display the font properties and dropdown menu and sliders
+        $("#dropbox").css({'font-size': 20, 'text-align': 'left'});
+        $("#dropbox").html(html);
+        if (varFont.getAxesCount()) {
+            $("#currentSetting").text('Current: ' + settingsStrings.join());
+        } else {
+            $("#currentSetting").text('Drag and drop a variable font to see more controls');
+        }
+        
+        // create a font family for the font and apply it
+        var base64String = btoa(Uint8ToString(new Uint8Array(fontBuffer))); // font binary data converted to base64
+        $("#sampletextfont").append("@font-face {font-family:'" + varFont.names.fontFamily.en + "'; " + 
+                                    "src: url('data:;base64," + base64String + "') format('truetype');} ");
+        $("#sampletext").css("font-family", varFont.names.fontFamily.en);
+        
+        // update the settings when any slider values change
+        $('input[type=range]').on('input', function () {
+            currentSettings = [];
+            settingsStrings = [];
+            for (var k=0; k<varFont.getAxesCount(); k++) {
+                var axis = varFont.getAxis(k);
+                var theSlider = 'slider'+k.toString()
+                var element = document.getElementById(theSlider);
+                currentSettings.push("'" + axis.tag + "' " + element.value);
+                settingsStrings.push(" " + axis.name.en + ": " + element.value);
+            }
+            $("#currentSetting").text('Current: ' + settingsStrings.join());
+            $("#sampletext").css('font-variation-settings', currentSettings.join());
+        });
+        
+    }
+    
+    //////////////////////////////////////////////////////////
+    // named instance dropdown menu functionality
+    //////////////////////////////////////////////////////////
+    
+    // When the user clicks on the Named Instances button,
+    // toggle between hiding and showing the dropdown content
+    function toggleDropdownList() {
+        document.getElementById("myDropdown").classList.toggle("show");
+    }
+
+    // apply the named instance settings to the sample text
+    function setNamedInstance(instanceNumber) {
+        var vf = window.font;
+        var settings = vf.getNamedInstanceSetting(instanceNumber);
+        $("#sampletext").css('font-variation-settings', settings);
+        $("#currentSetting").text('Current: ' + vf.getInstanceName(instanceNumber));
+        // update the slider values
+        var coords = vf.getNamedInstance(instanceNumber).coordinates;
+        var i = 0;
+        for (var tag in coords) {
+            //set slider value to coordinate string
+            $('#slider' + (i++).toString()).val(coords[tag].toString());
+        }
+        
+    }
+
+</script>
+
+
+<title>Demo of variableFont.js functions</title>
+
+
+</head><body>
+
+<div id="dropbox" ondrop="drop(event)" ondragover="allowDrop(event)">
+<span>Drag and drop a font here to upload</span></div>
+
+
+<div id="sampletext" contenteditable="true">
+<p>Enter or paste sample text here</p></div>
+
+<div id="message"></div>
+
+</body>
+</html>

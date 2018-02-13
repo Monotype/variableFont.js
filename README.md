@@ -1,24 +1,12 @@
 # variableFont.js
-JS library for handling variable fonts through use of opentype.js
+JavaScript library for using variable fonts. Extends the functionality of [opentype.js](https://github.com/nodebox/opentype.js).
+You must also install opentype.js to use this library.
 
-## Compiling
+## Demo
 
-First install [nodejs](https://nodejs.org/en/) which will by default include `npm`. Then install latest typescript compiler on system, using following `npm` command.
+The demo folder contains a web page called VariableFontViewer.html. This page shows how to use the features of variableFont.js. You do not have to use it with a server. 
 
-```
-npm install --global typescript
-```
-
-In the src folder of this project execute following command to compile. (current variablefont.js is generated using tsc version `2.5.3`).
-
-```
-tsc
-```
-OR
-```
-tsc --project ./tsconfig.json
-```
-The output file is `variablefont.js` in the root folder.
+Simply save the folder locally then open VariableFontViewer.html in a compatible web browser (for example, Chrome version 62 or higher). Drag and drop a variable font onto the top section. It will change to show the axes and sliders to control the settings for the sample text. You can edit the sample text. 
 
 ## API:
 
@@ -42,6 +30,3 @@ vf.getAxesCount(); // get number of axes entries from fvar table.
 
 This project has a hard dependency on [opentype.js](https://github.com/nodebox/opentype.js). Please follow [instruction](https://github.com/nodebox/opentype.js#using-bower) on the opentype.js site to include it in your page. Opentype.js must be included before including variablefont.js in the html page. variableFont.js functions depend on opentype.js.
 
-## Contributing
-
-This project contains a single source file as of now (Oct 18, 2017), at `src\index.ts`.
