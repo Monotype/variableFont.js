@@ -4,7 +4,7 @@ You must also install opentype.js to use this library.
 
 ## Demo
 
-The demo folder contains a web page called VariableFontViewer.html. This page shows how to use the features of variableFont.js. You do not have to use it with a server. 
+The demo folder contains a web page called VariableFontViewer.html. This page shows how to use the features of variableFont.js. You do not have to use it with a server. The demo page is also available at http://monotype.github.io/variableFont.js/demo/.
 
 Simply save the folder locally then open VariableFontViewer.html in a compatible web browser (for example, Chrome version 62 or higher). Drag and drop a variable font onto the top section. It will change to show the axes and sliders to control the settings for the sample text. You can edit the sample text. 
 
