@@ -68,6 +68,13 @@
         }
     }
     
+    // control sample text size
+    function adjustSampleTextSize(){
+        var font_size = document.getElementById('sampletextsize').value;
+        $("#sampletext").css('font-size', font_size+'px');
+        $("#textsize").text("Text Size ("+font_size.toString()+"px): ");
+    }
+    
     // change page when font is loaded
     function onFontLoaded(varFont, fontBuffer) {
         window.font = varFont;
@@ -75,11 +82,17 @@
         var settingsStrings = [];
         
         // html with basic information about the variable font
-        var html = '<span style="font-size:16px;" style="text-align: left;"> <table width="100%"><col width="20%"><col width="10%"><col width="70%"><tr><td>' +
+        var html = '<span style="font-size:16px;" style="text-align: left;"> <table width="100%"><col width="20%"><col width="80%"><tr><td>' +
 		           'Family: '+ varFont.names.fontFamily.en + '<br>' +
                    'Subfamily: ' + varFont.names.fontSubfamily.en + '<br>' +
                    'Instances: ' + varFont.getInstancesCount() + '<br>Axes: ' + varFont.getAxesCount() + '<br>' +
-                   '<div id="currentSetting"></div></td><td>';
+                   '<div id="currentSetting"></div></td><td>' +
+                   '<table><col width="15%"><col width="85%"><tr><td><div id="textsize" style="text-align: right;">Text Size' +
+                   ' (36): </td><td>' +
+                   '<div id ="sizecontainer"><input type="range" min="10" max="100" value="36" class="slider" id="sampletextsize" step="1.0" oninput="adjustSampleTextSize();"></div>' +
+                   '</td></tr><tr><td>';
+
+                   
         
         // if font is a variable font, add named instances dropdown and sliders
         if (varFont.getAxesCount()) {
@@ -94,7 +107,7 @@
                 html += '<div id="list"'+ i.toString() + ' onclick="setNamedInstance(' + i.toString()+')"><a href="#">' + 
                         varFont.getInstanceName(i) + '</a></div>';
             }
-            html += '  </div></div></td><td> '; 
+            html += '  </div></div></td><td> ';
 
             // add slider controls for each axis
             html += '<div id="slidecontainer"><table>';
@@ -119,7 +132,7 @@
             $("#currentSetting").text('Current: ' + settingsStrings.join());
         } else {
             $("#currentSetting").text('Drag and drop a variable font to see more controls');
-        }
+        };
         
         // create a font family for the font and apply it
         var base64String = btoa(Uint8ToString(new Uint8Array(fontBuffer))); // font binary data converted to base64
@@ -138,7 +151,9 @@
                 currentSettings.push("'" + axis.tag + "' " + element.value);
                 settingsStrings.push(" " + axis.name.en + ": " + element.value);
             }
-            $("#currentSetting").text('Current: ' + settingsStrings.join());
+            if (varFont.getAxesCount()) {
+                $("#currentSetting").text('Current: ' + settingsStrings.join());
+            };
             $("#sampletext").css('font-variation-settings', currentSettings.join());
         });
         
