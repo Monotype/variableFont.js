@@ -19,7 +19,7 @@
     position:relative;
     width: 100%;
     border: 2px solid rgba(0, 0, 0, 0.3);
-    padding: 6px;
+
 }
 
 /* Dropdown Button */
@@ -76,7 +76,7 @@
 .slider {
     -webkit-appearance: none;  /* Override default CSS styles */
     appearance: none;
-    width: 500px; /* Specified width */
+    width: 600px; /* Specified width */
     height: 15px; /* Specified height */
     background: #d3d3d3; /* Grey background */
     outline: none; /* Remove outline */
