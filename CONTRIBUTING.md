@@ -10,21 +10,24 @@ TypeScript is available on npm at https://www.npmjs.com/package/typescript
 
 ### Compiling
 
-First install [nodejs](https://nodejs.org/en/) which will by default include `npm`. Then install latest typescript compiler on system, using following `npm` command.
+First install [Node.js](https://nodejs.org/) which will by default include `npm`. Then, install the project dependencies, including the TypeScript compiler, using following command:
 
-```
-npm install --global typescript
+```sh
+npm install
 ```
 
-In the src folder of this project execute following command to compile. (current variablefont.js is generated using tsc version `2.5.3`).
+Don’t edit the `variableFont.js` file directly. It is generated using the TypeScript compiler, `tsc`. You can rebuild the file yourself by running the following command:
 
+```sh
+npm run build
 ```
-tsc
+
+This is a shortcut to running the build script defined in the `package.json` file. You can manually run it with:
+
+```sh
+npx tsc --project ./src/tsconfig.json
 ```
-OR
-```
-tsc --project ./tsconfig.json
-```
+
 The output file is `variablefont.js` in the root folder.
 
 ## How to modify the source for contribution
@@ -40,22 +43,20 @@ The output file is `variablefont.js` in the root folder.
     A dedicated branch for your pull request means you can develop multiple features at the same time, and ensures
     that your pull request is stable even if you later decide to develop an unrelated feature.
 
-4. Install typescript:
+4. Install dependencies:
 
-```
-npm install --global typescript
+```sh
+npm install
 ```
 
-5. Make some changes to the source files
+5. Make some changes to the source files in `src`
 
 6. Build variableFont.js
+
 ```
-tsc
+npm run build
 ```
-OR
-```
-tsc --project ./tsconfig.json
-```
+
 The output file is `variablefont.js` in the root folder.
 
 7. Test your changes in the demo program. Modify it if needed.
