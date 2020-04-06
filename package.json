@@ -4,17 +4,25 @@
   "description": "Library for using Variable Fonts. Extends the functionality of OpenType.js.",
   "main": "variableFont.js",
   "author": "",
-  "repository": "https://github.com/monotype/variableFont.js.git",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/monotype/variableFont.js.git"
+  },
   "license": "MIT",
   "peerDependencies": {
     "opentype.js": "^0.8.0"
   },
   "devDependencies": {
     "opentype.js": "^0.8.0",
-    "typescript": "2.5.3"
+    "typescript": "^2.5.3"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc --project ./src/tsconfig.json"
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/monotype/variableFont.js/issues"
+  },
+  "homepage": "https://github.com/monotype/variableFont.js#readme",
+  "keywords": []
 }
