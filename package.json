@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "description": "Library for using Variable Fonts. Extends the functionality of OpenType.js.",
   "main": "variableFont.js",
-  "author": "",
+  "author": "Bob Taylor, Monotype Imaging Inc.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/monotype/variableFont.js.git"
